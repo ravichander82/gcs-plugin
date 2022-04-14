@@ -1,0 +1,25 @@
+buildscript {
+  repositories {
+    mavenCentral()
+  }
+  dependencies {
+  }
+}
+
+plugins {
+  id("io.spinnaker.plugin.bundler").version("$spinnakerGradleVersion")
+  id("com.palantir.git-version").version("0.12.2")
+}
+apply plugin: "io.spinnaker.plugin.bundler"
+
+spinnakerBundle {
+  pluginId = "Git.AccountRegistration"
+  description = "Git account registration."
+  provider = "https://www.opsmx.com"
+  version = rootProject.version
+}
+
+subprojects {
+  group = "com.google.git.spinnaker.plugin.registration"
+  version = rootProject.version
+}
