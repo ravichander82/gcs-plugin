@@ -24,7 +24,7 @@ config:
   repositoryName: 'https://github.com/ashish-ck/git-accounts-yml.git'
   filename: 'accounts.yml'
   gitHttpsUsername: 'ashish-ck'
-  gitHttpsPassword: 'Victorqwer@123'
+  gitHttpsPassword: 'password'
   githubOAuthAccessToken: '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'
   sshPrivateKeyFilePath: '/home/ashish/.ssh/id_ed25519'
   sshPrivateKeyPassphrase: ''
