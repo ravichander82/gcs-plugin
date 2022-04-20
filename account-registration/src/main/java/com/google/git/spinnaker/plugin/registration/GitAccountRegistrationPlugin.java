@@ -39,8 +39,7 @@ public class GitAccountRegistrationPlugin extends PrivilegedSpringPlugin {
         } catch (BeanDefinitionStoreException e) {
             System.out.println("Could not register bean {}"+ lazyLoadCredentialsRepositoryDefinition.getBeanClassName());
         }
-        List<Class> classes = List.of(GoogleCredentialsDefinitionSource.class, GitAccountsStatus.class,
-                GoogleCredentialsRepository.class);
+        List<Class> classes = List.of(GoogleCredentialsDefinitionSource.class, GitAccountsStatus.class);
         for (Class classToAdd : classes) {
             BeanDefinition beanDefinition = beanDefinitionFor(classToAdd);
             try {
