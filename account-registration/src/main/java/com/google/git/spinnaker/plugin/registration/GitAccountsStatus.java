@@ -23,7 +23,6 @@ import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.Session;
 import com.netflix.spinnaker.clouddriver.google.config.GoogleConfigurationProperties;
 import lombok.Data;
-import lombok.extern.slf4j.Slf4j;
 import org.eclipse.jgit.api.CloneCommand;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.TransportCommand;
@@ -54,7 +53,6 @@ import java.util.Map;
 import java.util.HashMap;
 import java.util.Comparator;
 
-@Slf4j
 @Data
 public class GitAccountsStatus {
     private UsernamePasswordCredentialsProvider httpsUsernamePasswordCredentialsProvider;
