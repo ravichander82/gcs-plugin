@@ -23,3 +23,7 @@ subprojects {
   group = "com.google.git.spinnaker.plugin.registration"
   version = rootProject.version
 }
+
+configurations.all {
+  exclude group: 'org.slf4j', module: 'slf4j-log4j12'
+}
