@@ -20,7 +20,7 @@ spinnaker:
         id: gitAccountRegistrationPluginRepo
         url: https://raw.githubusercontent.com/ashish-ck/git-accounts-yml/master/repositories.json
 
-gitSourceConfig:
+config:
   repositoryName: 'https://github.com/ashish-ck/git-accounts-yml.git'
   filename: 'accounts.yml'
   gitHttpsUsername: 'ashish-ck'
