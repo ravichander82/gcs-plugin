@@ -22,6 +22,7 @@ import com.jcraft.jsch.JSch;
 import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.Session;
 import com.netflix.spinnaker.clouddriver.google.config.GoogleConfigurationProperties;
+import com.netflix.spinnaker.credentials.definition.CredentialsDefinition;
 import lombok.extern.slf4j.Slf4j;
 import org.eclipse.jgit.api.CloneCommand;
 import org.eclipse.jgit.api.Git;
@@ -146,15 +147,15 @@ public class GitAccountsStatus {
         }
     }
 
-    public synchronized boolean fetchAccounts() {
+    public synchronized Boolean fetchAccounts() {
         log.info("Fetching Accounts *************************************");
         List<GoogleConfigurationProperties.ManagedAccount> googleCredentialsDefinitions = new ArrayList<>();
-        InputStream bucket = downloadRemoteFile();
-        if (bucket == null) {
+        InputStream inputStream = downloadRemoteFile();
+        if (inputStream == null) {
             return false;
         }
         Yaml yaml = new Yaml();
-        Map<String, Object> data = yaml.load(bucket);
+        Map<String, Object> data = yaml.load(inputStream);
         HashMap map = (HashMap) data.get("google");
         Boolean isEnabled = (Boolean) map.get("enabled");
         ArrayList accountsList = (ArrayList) map.get("accounts");

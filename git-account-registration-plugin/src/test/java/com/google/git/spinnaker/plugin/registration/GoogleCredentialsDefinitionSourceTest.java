@@ -1,31 +1,27 @@
-//package com.google.git.spinnaker.plugin.registration;
-//
-//import com.netflix.spinnaker.clouddriver.google.config.GoogleConfigurationProperties;
-//import static org.junit.Assert.assertFalse;
-//import org.junit.Before;
-//import org.junit.jupiter.api.Test;
-//import static org.mockito.Mockito.mock;
-//import static org.mockito.Mockito.when;
-//
-//import java.util.List;
-//
-//class GoogleCredentialsDefinitionSourceTest {
-//
-//    private GoogleCredentialsDefinitionSource googleCredentialsDefinitionSource;
-//    private GitAccountsStatus accountsStatus;
-//    private List<GoogleConfigurationProperties.ManagedAccount> googleCredentialsDefinitions;
-//
-//    @Before
-//    public void setUp(){
-//        googleCredentialsDefinitionSource = new GoogleCredentialsDefinitionSource();
-//        accountsStatus = mock(GitAccountsStatus.class);
-//        when(accountsStatus.fetchAccounts()).thenReturn(true);
-//        when(accountsStatus.getGoogleAccountsAsList()).
-//                thenReturn(List.of(mock(GoogleConfigurationProperties.ManagedAccount.class)));
-//    }
-//
-//    @Test
-//    void getCredentialsDefinitions() {
-//        assertFalse(googleCredentialsDefinitionSource.getCredentialsDefinitions().isEmpty());
-//    }
-//}
+package com.google.git.spinnaker.plugin.registration;
+
+import org.junit.jupiter.api.Test;
+import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
+import org.mockito.junit.MockitoJUnitRunner;
+import org.springframework.test.util.ReflectionTestUtils;
+
+import static org.mockito.Mockito.*;
+
+@RunWith(MockitoJUnitRunner.class)
+class GoogleCredentialsDefinitionSourceTest {
+
+    @InjectMocks
+    private GoogleCredentialsDefinitionSource googleCredentialsDefinitionSource;
+    private GitAccountsStatus accountsStatus;
+
+    @Test
+    void getCredentialsDefinitions() {
+        googleCredentialsDefinitionSource = new GoogleCredentialsDefinitionSource();
+        accountsStatus = mock(GitAccountsStatus.class);
+        ReflectionTestUtils.setField(googleCredentialsDefinitionSource, "accountsStatus", accountsStatus);
+        when(accountsStatus.fetchAccounts()).thenReturn(true);
+        googleCredentialsDefinitionSource.getCredentialsDefinitions();
+        verify(accountsStatus, times(1)).fetchAccounts();
+    }
+}
