@@ -19,30 +19,28 @@ package com.google.git.spinnaker.plugin.registration;
 import com.google.common.collect.ImmutableList;
 import com.netflix.spinnaker.clouddriver.google.config.GoogleConfigurationProperties;
 import com.netflix.spinnaker.credentials.definition.CredentialsDefinitionSource;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import java.util.List;
 
+@Slf4j
+@Component
 public class GoogleCredentialsDefinitionSource implements CredentialsDefinitionSource<GoogleConfigurationProperties.ManagedAccount> {
-    private final GitAccountsStatus accountsStatus;
-    private final GoogleConfigurationProperties credentialsConfig;
-    private List<GoogleConfigurationProperties.ManagedAccount> googleCredentialsDefinitions;
 
     @Autowired
-    public GoogleCredentialsDefinitionSource(GitAccountsStatus accountsStatus, GoogleConfigurationProperties credentialsConfig) {
-        this.accountsStatus = accountsStatus;
-        this.credentialsConfig = credentialsConfig;
-    }
+    private GitAccountsStatus accountsStatus;
+
+    private List<GoogleConfigurationProperties.ManagedAccount> googleCredentialsDefinitions;
 
     @Override
     public List<GoogleConfigurationProperties.ManagedAccount> getCredentialsDefinitions() {
-        System.out.println("getCredentialsDefinitions ====================  ");
-        if (googleCredentialsDefinitions == null) {
-            googleCredentialsDefinitions = credentialsConfig.getAccounts();
-        }
+        log.info("Get credentials definitions started *************************************");
         if (accountsStatus.fetchAccounts()) {
             googleCredentialsDefinitions = accountsStatus.getGoogleAccountsAsList();
         }
         return ImmutableList.copyOf(googleCredentialsDefinitions);
     }
 }
+

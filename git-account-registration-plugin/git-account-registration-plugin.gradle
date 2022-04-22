@@ -8,46 +8,42 @@ targetCompatibility = 11
 repositories {
   mavenLocal()
   mavenCentral()
-  jcenter()
-  maven { url "http://dl.google.com/spinnaker-releases/jars/" }
+  maven { url "https://dl.google.com/spinnaker/gradle/" }
 }
 
 sourceSets.main.java.srcDirs = ["src/main/java"]
 
 spinnakerPlugin {
-  serviceName = "clouddriver"
+  serviceName = "git-account-registration-plugin"
   pluginClass = "com.google.git.spinnaker.plugin.registration.GitAccountRegistrationPlugin"
-  requires = "clouddriver>=7.1.0"
+  requires = "git-account-registration-plugin>=0.0.0"
 }
 
 dependencies {
   implementation "com.google.guava:guava:30.0-jre"
-  implementation 'org.yaml:snakeyaml:1.8'
-  implementation 'com.fasterxml.jackson.core:jackson-databind:2.0.1'
-  implementation "org.eclipse.jgit:org.eclipse.jgit:5.7.0.202003110725-r"
-  implementation 'com.google.cloud:google-cloud-storage'
   implementation platform('com.google.cloud:libraries-bom:25.0.0')
-  implementation 'org.slf4j:slf4j-api:1.7.36'
+  implementation 'com.google.cloud:google-cloud-storage'
+  compileOnly (group: 'org.eclipse.jgit', name: 'org.eclipse.jgit', version: '5.7.0.202003110725-r') { exclude group: 'org.slf4j' }
   compileOnly "com.google.api-client:google-api-client:1.31.5"
+  compileOnly (group: 'org.yaml', name: 'snakeyaml', version: '1.23')
   compileOnly "org.codehaus.groovy:groovy-all:+"
   compileOnly (group: 'org.springframework', name: 'spring-context', version: '5.2.9.RELEASE')
   compileOnly (group: 'io.spinnaker.kork', name: 'kork-plugins-spring-api', version: "${korkVersion}")
+  compileOnly (group: 'io.spinnaker.kork', name: 'kork-plugins', version: "${korkVersion}")
+  compileOnly (group: 'io.spinnaker.kork', name: 'kork-credentials', version: "${korkVersion}")
+  compileOnly (group: 'io.spinnaker.kork', name: 'kork-secrets', version: "${korkVersion}")
+  compileOnly (group: 'io.spinnaker.kork', name: 'kork-web', version: "${korkVersion}")
   compileOnly (group: 'org.springframework', name: 'spring-web', version: '5.2.9.RELEASE')
-  implementation 'org.springframework.boot:spring-boot-configuration-processor:2.6.6'
   compileOnly "io.spinnaker.clouddriver:clouddriver-api:${clouddriverVersion}"
-  compileOnly "io.spinnaker.clouddriver:clouddriver-lambda:${clouddriverVersion}"
   compileOnly "io.spinnaker.clouddriver:cats-core:${clouddriverVersion}"
   compileOnly "io.spinnaker.clouddriver:clouddriver-security:${clouddriverVersion}"
   compileOnly "io.spinnaker.clouddriver:clouddriver-eureka:${clouddriverVersion}"
   compileOnly "io.spinnaker.clouddriver:clouddriver-core:${clouddriverVersion}"
-  implementation "io.spinnaker.clouddriver:clouddriver-google:${clouddriverVersion}"
+  compileOnly "io.spinnaker.clouddriver:clouddriver-google:${clouddriverVersion}"
   compileOnly "io.spinnaker.clouddriver:clouddriver-google-common:${clouddriverVersion}"
-  compileOnly "org.yaml:snakeyaml:1.23"
-  compileOnly "io.spinnaker.fiat:fiat-core:${fiatVersion}"
   compileOnly 'org.projectlombok:lombok:+'
   annotationProcessor "org.projectlombok:lombok:+"
   annotationProcessor("org.pf4j:pf4j:$pf4jVersion")
-
   testImplementation "io.spinnaker.clouddriver:clouddriver-api:${clouddriverVersion}"
   testImplementation "io.spinnaker.clouddriver:cats-core:${clouddriverVersion}"
   testImplementation "io.spinnaker.clouddriver:clouddriver-security:${clouddriverVersion}"
@@ -55,19 +51,11 @@ dependencies {
   testImplementation "io.spinnaker.clouddriver:clouddriver-core:${clouddriverVersion}"
   testImplementation "io.spinnaker.clouddriver:clouddriver-google:${clouddriverVersion}"
   testImplementation "io.spinnaker.clouddriver:clouddriver-google-common:${clouddriverVersion}"
-  testImplementation "io.spinnaker.fiat:fiat-core:${fiatVersion}"
-  testImplementation group: 'io.strikt', name: 'strikt-core', version: '0.22.1'
-  testImplementation group: 'dev.minutest', name: 'minutest', version: '1.10.0'
+  testImplementation (group: 'io.spinnaker.kork', name: 'kork-plugins-spring-api', version: "${korkVersion}")
+  testImplementation (group: 'io.spinnaker.kork', name: 'kork-plugins', version: "${korkVersion}")
+  testImplementation (group: 'io.spinnaker.kork', name: 'kork-credentials', version: "${korkVersion}")
+  testImplementation (group: 'io.spinnaker.kork', name: 'kork-secrets', version: "${korkVersion}")
+  testImplementation (group: 'io.spinnaker.kork', name: 'kork-web', version: "${korkVersion}")
   testImplementation group: 'org.springframework.boot', name: 'spring-boot-starter-test', version: '2.2.5.RELEASE'
   testImplementation group: 'org.springframework', name: 'spring-web', version: '5.2.9.RELEASE'
-  compile "org.codehaus.groovy:groovy:2.5.13"
-  testCompile platform("org.spockframework:spock-bom:2.0-M3-groovy-2.5")
-  testCompile "org.spockframework:spock-core"
-}
-
-test {
-  useJUnitPlatform()
-  testLogging {
-    events "passed", "skipped", "failed", "standardOut", "standardError"
-  }
 }

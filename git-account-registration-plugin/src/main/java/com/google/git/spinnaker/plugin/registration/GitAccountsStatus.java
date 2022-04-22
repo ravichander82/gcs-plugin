@@ -22,14 +22,16 @@ import com.jcraft.jsch.JSch;
 import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.Session;
 import com.netflix.spinnaker.clouddriver.google.config.GoogleConfigurationProperties;
-import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.eclipse.jgit.api.CloneCommand;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.TransportCommand;
 import org.eclipse.jgit.api.TransportConfigCallback;
 import org.eclipse.jgit.api.errors.GitAPIException;
-import org.eclipse.jgit.lib.*;
+import org.eclipse.jgit.lib.Constants;
+import org.eclipse.jgit.lib.ObjectId;
+import org.eclipse.jgit.lib.ObjectLoader;
+import org.eclipse.jgit.lib.Repository;
 import org.eclipse.jgit.revwalk.RevCommit;
 import org.eclipse.jgit.revwalk.RevTree;
 import org.eclipse.jgit.revwalk.RevWalk;
@@ -40,6 +42,7 @@ import org.eclipse.jgit.util.FS;
 import org.eclipse.jgit.util.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 import org.yaml.snakeyaml.Yaml;
 
 import java.io.ByteArrayInputStream;
@@ -48,14 +51,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.List;
-import java.util.ArrayList;
-import java.util.Map;
-import java.util.HashMap;
-import java.util.Comparator;
+import java.util.*;
 
 @Slf4j
-@Data
+@Component
 public class GitAccountsStatus {
     private UsernamePasswordCredentialsProvider httpsUsernamePasswordCredentialsProvider;
     private UsernamePasswordCredentialsProvider httpsOAuthCredentialsProvider;
@@ -67,7 +66,9 @@ public class GitAccountsStatus {
     @Value("#{'${config.credentialType}'.toUpperCase()}")
     private GitCredentialType credentialType;
     private List<GoogleConfigurationProperties.ManagedAccount> accounts;
-    private GoogleConfigurationProperties credentialsConfig;
+
+    public GitAccountsStatus(){
+    }
 
     @Autowired
     public GitAccountsStatus(@Value("${config.gitHttpsUsername:#{null}}") String gitHttpsUsername,
@@ -77,34 +78,28 @@ public class GitAccountsStatus {
                              @Value("${config.sshPrivateKeyPassphrase:#{null}}") String sshPrivateKeyPassphrase,
                              @Value("${config.sshKnownHostsFilePath:#{null}}") String sshKnownHostsFilePath,
                              @Value("${config.sshTrustUnknownHosts:false}") Boolean sshTrustUnknownHosts) {
-        System.out.println("GitCredentialType ================================================================");
+        log.info("{} started *************************************", this.getClass().getSimpleName());
         setHttpsUsernamePasswordCredentialsProvider(gitHttpsUsername, gitHttpsPassword);
         setHttpsOAuthCredentialsProvider(githubOAuthAccessToken);
         setSshPrivateKeyTransportConfigCallback(sshPrivateKeyFilePath, sshPrivateKeyPassphrase, sshKnownHostsFilePath,
                 sshTrustUnknownHosts);
     }
 
-    @Autowired(required = false)
-    public void setGoogleConfigurationProperties(GoogleConfigurationProperties credentialsConfig){
-        this.credentialsConfig = credentialsConfig;
-    }
-
     private InputStream downloadRemoteFile() {
         try {
-            String REMOTE_URL = repositoryName;
-            File localPath = File.createTempFile("TestGitRepository", "");
-            if(!localPath.delete()) {
+            File localPath = File.createTempFile(UUID.randomUUID().toString(), "");
+            if (!localPath.delete()) {
+                log.error("Could not delete temporary file {} *************************************", localPath);
                 throw new IOException("Could not delete temporary file " + localPath);
             }
-            Repository repo;
-            System.out.println("Cloning from " + REMOTE_URL + " to " + localPath);
+            log.info("Cloning from {} to {}", repositoryName, localPath);
             CloneCommand cloneCommand = Git.cloneRepository()
-                    .setURI(REMOTE_URL)
+                    .setURI(repositoryName)
                     .setDirectory(localPath);
             attachCredentials(cloneCommand);
             Git result = cloneCommand.call();
-            System.out.println("Having repository: " + result.getRepository().getDirectory());
-            repo = result.getRepository();
+            log.info("Repository {}", result.getRepository().getDirectory());
+            Repository repo = result.getRepository();
             repo.getObjectDatabase();
             ObjectId lastCommitId = repo.resolve(Constants.HEAD);
             RevWalk revWalk = new RevWalk(repo);
@@ -115,6 +110,8 @@ public class GitAccountsStatus {
             treeWalk.setRecursive(true);
             treeWalk.setFilter(PathFilter.create(filename));
             if (!treeWalk.next()) {
+                log.error("Error reading file {} from repo {} *************************************", filename,
+                        repositoryName);
                 throw new IOException(String.format("Error reading file %s from repo %s", filename, repositoryName));
             }
             ObjectId objectId = treeWalk.getObjectId(0);
@@ -132,6 +129,7 @@ public class GitAccountsStatus {
     }
 
     private <T extends TransportCommand> void attachCredentials(T command) {
+        log.info("Attaching Credentials *************************************");
         switch (credentialType) {
             case HTTPS_USERNAME_PASSWORD:
                 command.setCredentialsProvider(httpsUsernamePasswordCredentialsProvider);
@@ -149,7 +147,7 @@ public class GitAccountsStatus {
     }
 
     public synchronized boolean fetchAccounts() {
-        System.out.println("fetchAccounts ===========================================================");
+        log.info("Fetching Accounts *************************************");
         List<GoogleConfigurationProperties.ManagedAccount> googleCredentialsDefinitions = new ArrayList<>();
         InputStream bucket = downloadRemoteFile();
         if (bucket == null) {
@@ -161,12 +159,11 @@ public class GitAccountsStatus {
         Boolean isEnabled = (Boolean) map.get("enabled");
         ArrayList accountsList = (ArrayList) map.get("accounts");
         ObjectMapper mapper = new ObjectMapper();
-        System.out.println("Google account ====================  ");
-        for(int i = 0; i < accountsList.size(); i++) {
+        for (int i = 0; i < accountsList.size(); i++) {
             GoogleConfigurationProperties.ManagedAccount managedAccount = mapper.
                     convertValue(accountsList.get(i), GoogleConfigurationProperties.ManagedAccount.class);
             googleCredentialsDefinitions.add(managedAccount);
-            System.out.println("Google account ====================  " + managedAccount.toString());
+            log.info("Fetched Google Account: {} *************************************", managedAccount.toString());
         }
         this.accounts = ImmutableList.copyOf(googleCredentialsDefinitions);
         return true;
@@ -180,19 +177,21 @@ public class GitAccountsStatus {
         if (!StringUtils.isEmptyOrNull(gitHttpsUsername) && !StringUtils.isEmptyOrNull(gitHttpsPassword)) {
             httpsUsernamePasswordCredentialsProvider = new UsernamePasswordCredentialsProvider(gitHttpsUsername,
                     gitHttpsPassword);
+            log.info("Init Https Username Password Credentials Provider *************************************");
         }
     }
 
     private void setHttpsOAuthCredentialsProvider(String githubOAuthAccessToken) {
         if (!StringUtils.isEmptyOrNull(githubOAuthAccessToken)) {
             httpsOAuthCredentialsProvider = new UsernamePasswordCredentialsProvider(githubOAuthAccessToken, "");
+            log.info("Init Https OAuth Credentials Provider *************************************");
         }
     }
 
     private void setSshPrivateKeyTransportConfigCallback(String sshPrivateKeyFilePath,
-                                                        String sshPrivateKeyPassphrase,
-                                                        String sshKnownHostsFilePath,
-                                                        boolean sshTrustUnknownHosts) {
+                                                         String sshPrivateKeyPassphrase,
+                                                         String sshKnownHostsFilePath,
+                                                         boolean sshTrustUnknownHosts) {
         if (!StringUtils.isEmptyOrNull(sshPrivateKeyFilePath) && !StringUtils.isEmptyOrNull(sshPrivateKeyPassphrase)) {
             SshSessionFactory sshSessionFactory = new JschConfigSessionFactory() {
                 @Override
@@ -201,12 +200,13 @@ public class GitAccountsStatus {
                         session.setConfig("StrictHostKeyChecking", "no");
                     }
                 }
+
                 @Override
                 protected JSch createDefaultJSch(FS fs) throws JSchException {
                     JSch defaultJSch = super.createDefaultJSch(fs);
                     defaultJSch.addIdentity(sshPrivateKeyFilePath, sshPrivateKeyPassphrase);
                     if (sshKnownHostsFilePath != null && sshTrustUnknownHosts) {
-//            log.warn("SSH known_hosts file path supplied, ignoring 'sshTrustUnknownHosts' option");
+                        log.warn("SSH known_hosts file path supplied, ignoring 'sshTrustUnknownHosts' option");
                     }
                     if (sshKnownHostsFilePath != null) {
                         defaultJSch.setKnownHosts(sshKnownHostsFilePath);
@@ -218,6 +218,7 @@ public class GitAccountsStatus {
                 SshTransport sshTransport = (SshTransport) transport;
                 sshTransport.setSshSessionFactory(sshSessionFactory);
             };
+            log.info("Init Ssh Transport Config Callback *************************************");
         }
     }
 

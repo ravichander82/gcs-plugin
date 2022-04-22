@@ -22,42 +22,51 @@ import org.springframework.beans.factory.BeanDefinitionStoreException;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class GitAccountRegistrationPlugin extends PrivilegedSpringPlugin {
 
     public GitAccountRegistrationPlugin(PluginWrapper wrapper) {
         super(wrapper);
+        log.info("{} started *************************************", this.getClass().getSimpleName());
     }
 
     @Override
     public void registerBeanDefinitions(BeanDefinitionRegistry registry) {
-        BeanDefinition lazyLoadCredentialsRepositoryDefinition = primaryBeanDefinitionFor(GoogleCredentialsRepository.class);
+        log.info("Register Bean Definitions started *************************************");
+        BeanDefinition googleCredentialsRepository = primaryBeanDefinitionFor(GoogleCredentialsRepository.class);
         try {
-            System.out.println("Registering bean: {}"+ lazyLoadCredentialsRepositoryDefinition.getBeanClassName());
-            registry.registerBeanDefinition("googleCredentialsRepository", lazyLoadCredentialsRepositoryDefinition);
+            log.info("Registering bean: {} *************************************",
+                    googleCredentialsRepository.getBeanClassName());
+            registry.registerBeanDefinition("googleCredentialsRepository", googleCredentialsRepository);
         } catch (BeanDefinitionStoreException e) {
-            System.out.println("Could not register bean {}"+ lazyLoadCredentialsRepositoryDefinition.getBeanClassName());
+            log.error("Could not register bean {}", googleCredentialsRepository.getBeanClassName());
         }
-        List<Class> classes = List.of(GoogleCredentialsDefinitionSource.class, GitAccountsStatus.class);
+        List<Class> classes = new ArrayList<>(Arrays.asList(
+                GoogleCredentialsDefinitionSource.class,
+                GitAccountsStatus.class));
         for (Class classToAdd : classes) {
             BeanDefinition beanDefinition = beanDefinitionFor(classToAdd);
             try {
-                System.out.println("Registering bean: {}"+ beanDefinition.getBeanClassName());
+                log.info("Registering bean: {} ******************************************",
+                        beanDefinition.getBeanClassName());
                 registerBean(beanDefinition, registry);
             } catch (ClassNotFoundException e) {
-                System.out.println("Could not register bean {}" + beanDefinition.getBeanClassName());
+                log.error("Could not register bean {} ******************************************",
+                        beanDefinition.getBeanClassName());
             }
         }
     }
 
     @Override
     public void start() {
-        System.out.println("{} plugin started" + this.getClass().getSimpleName());
+        log.info("{} plugin started ******************************************", this.getClass().getSimpleName());
     }
 
     @Override
     public void stop() {
-        System.out.println("{} plugin stopped" + this.getClass().getSimpleName());
+        log.info("{} plugin stopped******************************************", this.getClass().getSimpleName());
     }
 }

@@ -19,28 +19,15 @@ package com.google.git.spinnaker.plugin.registration;
 import com.netflix.spinnaker.clouddriver.google.security.GoogleNamedAccountCredentials;
 import com.netflix.spinnaker.credentials.CredentialsLifecycleHandler;
 import com.netflix.spinnaker.credentials.MapBackedCredentialsRepository;
-import com.netflix.spinnaker.credentials.definition.AbstractCredentialsLoader;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.context.annotation.Lazy;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 
+@Slf4j
 public class GoogleCredentialsRepository extends MapBackedCredentialsRepository<GoogleNamedAccountCredentials> {
-    private AbstractCredentialsLoader<? extends GoogleNamedAccountCredentials> loader;
 
-    public GoogleCredentialsRepository(
-            @Lazy CredentialsLifecycleHandler<GoogleNamedAccountCredentials> eventHandler,
-            @Lazy @Qualifier("googleCredentialsLoader") AbstractCredentialsLoader<? extends GoogleNamedAccountCredentials> loader) {
-        super("git", eventHandler);
-        this.loader = loader;
-    }
-
-    @Override
-    public GoogleNamedAccountCredentials getOne(String key) {
-        GoogleNamedAccountCredentials credentials = super.getOne(key);
-        if (credentials == null) {
-            System.out.println("Could not find account, {}. Checking remote repository." + key);
-            loader.load();
-            return super.getOne(key);
-        }
-        return credentials;
+    @Autowired
+    public GoogleCredentialsRepository(CredentialsLifecycleHandler<GoogleNamedAccountCredentials> eventHandler) {
+        super("gce", eventHandler);
+        log.info("{} started *************************************", this.getClass().getSimpleName());
     }
 }

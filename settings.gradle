@@ -6,9 +6,9 @@ pluginManagement {
   }
 }
 
-rootProject.name="git-account-registration-plugin-spinnaker"
+rootProject.name = "git-account-registration-plugin-spinnaker"
 
-include "account-registration"
+include "git-account-registration-plugin"
 
 def setBuildFile(project) {
   project.buildFileName = "${project.name}.gradle"
@@ -20,3 +20,4 @@ def setBuildFile(project) {
 rootProject.children.each {
   setBuildFile(it)
 }
+
