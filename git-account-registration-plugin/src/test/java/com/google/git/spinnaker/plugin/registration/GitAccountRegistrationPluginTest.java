@@ -9,11 +9,9 @@ import static org.mockito.Mockito.*;
 
 public class GitAccountRegistrationPluginTest {
 
-    private GitAccountRegistrationPlugin gitAccountRegistrationPlugin;
-
     @Test
     public void registerBeanDefinitions() {
-        gitAccountRegistrationPlugin = new GitAccountRegistrationPlugin(mock(PluginWrapper.class));
+        GitAccountRegistrationPlugin gitAccountRegistrationPlugin = new GitAccountRegistrationPlugin(mock(PluginWrapper.class));
         BeanDefinitionRegistry registry = mock(BeanDefinitionRegistry.class);
         doNothing().when(registry).registerBeanDefinition(any(), any());
         gitAccountRegistrationPlugin.registerBeanDefinitions(registry);

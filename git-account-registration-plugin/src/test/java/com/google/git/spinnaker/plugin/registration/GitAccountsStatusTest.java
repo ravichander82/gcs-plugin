@@ -7,11 +7,9 @@ import static org.mockito.Mockito.mock;
 
 class GitAccountsStatusTest {
 
-    private GitAccountsStatus gitAccountsStatus;
-
     @Test
     public void fetchAccounts() {
-        gitAccountsStatus = mock(GitAccountsStatus.class);
+        GitAccountsStatus gitAccountsStatus = mock(GitAccountsStatus.class);
         assertFalse(gitAccountsStatus.fetchAccounts());
     }
 }
