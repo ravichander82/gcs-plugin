@@ -8,7 +8,7 @@ import static org.mockito.Mockito.*;
 class GoogleCredentialsDefinitionSourceTest {
 
     @Test
-    void getCredentialsDefinitions() {
+    void testGetCredentialsDefinitions() {
         GoogleCredentialsDefinitionSource googleCredentialsDefinitionSource = new GoogleCredentialsDefinitionSource();
         GitAccountsStatus accountsStatus = mock(GitAccountsStatus.class);
         ReflectionTestUtils.setField(googleCredentialsDefinitionSource, "accountsStatus", accountsStatus);

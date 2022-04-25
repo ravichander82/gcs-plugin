@@ -22,7 +22,6 @@ import com.jcraft.jsch.JSch;
 import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.Session;
 import com.netflix.spinnaker.clouddriver.google.config.GoogleConfigurationProperties;
-import com.netflix.spinnaker.credentials.definition.CredentialsDefinition;
 import lombok.extern.slf4j.Slf4j;
 import org.eclipse.jgit.api.CloneCommand;
 import org.eclipse.jgit.api.Git;
@@ -86,7 +85,7 @@ public class GitAccountsStatus {
                 sshTrustUnknownHosts);
     }
 
-    private InputStream downloadRemoteFile() {
+    public InputStream downloadRemoteFile() {
         try {
             File localPath = File.createTempFile(UUID.randomUUID().toString(), "");
             if (!localPath.delete()) {
