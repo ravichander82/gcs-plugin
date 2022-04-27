@@ -10,7 +10,7 @@
         "requires": "gcs-plugin>=0.0.0",
         "sha512sum": "371ab22422a0646c9ed65f5b6400939b2b15a68aee22aef9569543e897af00c3b22745ced73701f0350ff1ab6ed58e0e04654e1648da7df0a7bef47853c1c73e",
         "state": "RELEASE",
-        "url": ""
+        "url": "https://github.com/ravichander82/gcs-plugin/releases/tag/v0.0.1"
       }
     ]
   }
