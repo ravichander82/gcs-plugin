@@ -9,13 +9,13 @@ repositories {
 }
 
 spinnakerBundle {
-  pluginId = "Git.AccountRegistration"
-  description = "Git Account Registration Plugin"
+  pluginId = "Gcs.Plugin"
+  description = "Gcs accounts Plugin"
   provider = "https://www.opsmx.com"
   version = rootProject.version
 }
 
 subprojects {
-  group = "com.google.git.spinnaker.plugin.registration"
+  group = "com.google.gcs.plugin"
   version = rootProject.version
 }

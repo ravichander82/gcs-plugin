@@ -6,9 +6,9 @@ pluginManagement {
   }
 }
 
-rootProject.name = "git-account-registration-plugin-spinnaker"
+rootProject.name = "gcs-plugin"
 
-include "git-account-registration-plugin"
+include "gcs-plugin"
 
 def setBuildFile(project) {
   project.buildFileName = "${project.name}.gradle"

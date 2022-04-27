@@ -14,15 +14,16 @@ repositories {
 sourceSets.main.java.srcDirs = ["src/main/java"]
 
 spinnakerPlugin {
-  serviceName = "git-account-registration-plugin"
-  pluginClass = "com.google.git.spinnaker.plugin.registration.GitAccountRegistrationPlugin"
-  requires = "git-account-registration-plugin>=0.0.0"
+  serviceName = "gcs-plugin"
+  pluginClass = "com.google.gcs.plugin.ClouddriverPlugin"
+  requires = "gcs-plugin>=0.0.0"
 }
 
 dependencies {
   implementation "com.google.guava:guava:30.0-jre"
   implementation platform('com.google.cloud:libraries-bom:25.0.0')
   implementation 'com.google.cloud:google-cloud-storage'
+  implementation "com.google.cloud:google-cloud-secretmanager"
   compileOnly (group: 'org.eclipse.jgit', name: 'org.eclipse.jgit', version: '5.7.0.202003110725-r') { exclude group: 'org.slf4j' }
   compileOnly "com.google.api-client:google-api-client:1.31.5"
   compileOnly (group: 'org.yaml', name: 'snakeyaml', version: '1.23')

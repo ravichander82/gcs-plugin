@@ -7,39 +7,26 @@ redis:
 
 spinnaker:
   extensibility:
-    plugins-root-path: /opt/clouddriver/plugins
     plugins:
-      Git.AccountRegistration:
-        id: Git.AccountRegistration
+      Gcs.Plugin:
+        id: Gcs.Plugin
         enabled: true
-        version: 0.0.1
+        Version: 1.0.1
         extensions: {}
-        config: {}
+    plugins-root-path: /opt/clouddriver/plugins
     repositories:
-      gitAccountRegistrationPluginRepo:
-        id: gitAccountRegistrationPluginRepo
-        url: https://raw.githubusercontent.com/ashish-ck/git-accounts-yml/master/repositories.json
+      gcsPlugin:
+        id: gcsPlugin
+        url: https://raw.githubusercontent.com/ravichander82/plugin-gcs/main/sample-plugin/plugins.json
 
-config:
-  repositoryName: 'https://github.com/ashish-ck/git-accounts-yml.git'
-  filename: 'accounts.yml'
-  gitHttpsUsername: 'ashish-ck'
-  gitHttpsPassword: 'password'
-  githubOAuthAccessToken: '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'
-  sshPrivateKeyFilePath: '/home/ashish/.ssh/id_ed25519'
-  sshPrivateKeyPassphrase: ''
-  sshKnownHostsFilePath: '/home/ashish/.ssh/known_hosts'
-  credentialType: 'HTTPS_GITHUB_OAUTH_TOKEN'
-  sshTrustUnknownHosts: true
+gcsbucketproperties:
+  gcsBucketName: 'waze_gcs'
+  fileName: 'sample.yml'
 
 credentials:
   poller:
     enabled: true
     types:
-      aws:
-        reloadFrequencyMs: 20000
-      ecs:
-        reloadFrequencyMs: 20000
       gce:
         reloadFrequencyMs: 2000
 
