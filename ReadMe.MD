@@ -23,10 +23,8 @@ google:
    accounts:
       - name: gcs-gcs-account
         requiredGroupMembership: []
-        permissions:
-           WRITE:
-              - compute.projects.write
-        project: opsmx-ggproject-2022
+        permissions: {}
+        project: main-host-project-162535
         jsonPath: encryptedFile:gcs!b:gce-accounts-v1!f:gce-account.json
         alphaListed: false
         imageProjects: []
@@ -79,7 +77,7 @@ spinnaker:
       repositories:
          gcsPlugin:
             id: gcsPlugin
-            url: https://raw.githubusercontent.com/ravichander82/plugin-gcs/main/sample-plugin/plugins.json
+            url: https://raw.githubusercontent.com/ravichander82/gcs-plugin/main/plugins.json
 
 credentials:
    poller:
