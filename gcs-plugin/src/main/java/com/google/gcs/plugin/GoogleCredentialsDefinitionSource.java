@@ -10,7 +10,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.yaml.snakeyaml.Yaml;
 
 import java.io.InputStream;
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -25,8 +24,7 @@ public class GoogleCredentialsDefinitionSource implements CredentialsDefinitionS
     private GCSConfig config;
 
     @Autowired
-    private GoogleSecretManager secretManager;
-
+    private SecretManager secretManager;
 
     @Override
     public List<GoogleConfigurationProperties.ManagedAccount> getCredentialsDefinitions() {
@@ -49,14 +47,7 @@ public class GoogleCredentialsDefinitionSource implements CredentialsDefinitionS
             String jsonPath = managedAccount.getJsonPath();
             if(EncryptedSecret.isEncryptedSecret(jsonPath)){
                 System.out.println(" JsonPath is encrypted secret ");
-                EncryptedSecret secret = EncryptedSecret.parse(jsonPath);
-
-                String values = secretManager.decrypt(secret);
-                Path path = secretManager.createTempFile("jsonPath",values.getBytes());
-
-                managedAccount.setJsonPath(path.toString());
-            } else {
-                System.out.println(" JsonPath is not encrypted secret ");
+                managedAccount.setJsonPath(secretManager.decryptAsFile(managedAccount.getJsonPath()).toString());
             }
             googleCredentialsDefinitions.add(managedAccount);
         }

@@ -30,8 +30,7 @@ public class ClouddriverPlugin extends PrivilegedSpringPlugin {
                 GoogleCredentialsDefinitionSource.class,
                 GcsSource.class,
                 GoogleUtils.class,
-                GCSConfig.class,
-                GoogleSecretManager.class));
+                GCSConfig.class));
         for (Class classToAdd : classes) {
             BeanDefinition beanDefinition = beanDefinitionFor(classToAdd);
             try {
