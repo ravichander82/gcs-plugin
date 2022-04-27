@@ -48,7 +48,7 @@ google:
    Expectation is that the bucket will return accounts that were updated after the specified time by the field.
    This is done to avoid returning and processing all accounts every time sync occurs.
    Attribute jsonPath of Google Account is stored as an encrtyped secret file. [profile](https://spinnaker.io/docs/reference/halyard/secrets/gcs-secrets/)
-   E.g. ```jsonPath: encryptedFile:gcs!b:gce-accounts-v1!f:gce-account.json```
+   E.g. ```jsonPath: encryptedFile:gcs!b:gcs-accounts!f:gce-account.json```
 2. Google Account are added/removed dynamically without restarting any services.
 
 
