@@ -3,14 +3,14 @@ This plugin fecthces from GCS bucket and reads a Yml/JSON file for loading GCE a
 
 
 ### Introduction
-1. Clouddriver poller syncs  with a configured Gcs bucket to update Spinnaker GCE accounts. Supports account addition, removal, and update.
-2. Dynamic accounts loading - The plugin will perform a sync operation with configured Gcs bucket to fetch accounts details from a file at runtime.
+1. Clouddriver poller syncs  with a configured GCS bucket to update Spinnaker GCE accounts. Supports account addition, removal, and update.
+2. Dynamic accounts loading - The plugin will perform a sync operation with configured GCS bucket to fetch accounts details from a file at runtime.
 
 
 ### Requirements
 1. Must be used with Spinnaker version 1.24 (TODO) or higher.
 2. Clouddriver must have support for Dynamic Accounts Loading [GCE support](https://github.com/kirangodishala/clouddriver/tree/1.26.x-external-accounts-support)
-3. Must have a Gcs bucket with bucketName, fileName to access the Yml/JSON file to load GCE accounts.
+3. Must have a GCS bucket with bucketName, fileName to access the Yml/JSON file to load GCE accounts.
 
 
 ### Fetches and Loads GCE Account from a file in a Gcs bucket
@@ -79,7 +79,7 @@ spinnaker:
       repositories:
          gcsPlugin:
             id: gcsPlugin
-            url: https://raw.githubusercontent.com/ashish-ck/git-accounts-yml/master/repositories.json
+            url: https://raw.githubusercontent.com/ravichander82/plugin-gcs/main/sample-plugin/plugins.json
 
 credentials:
    poller:
