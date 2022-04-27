@@ -25,7 +25,7 @@ google:
         requiredGroupMembership: []
         permissions: {}
         project: main-host-project-162535
-        jsonPath: encryptedFile:gcs!b:gcs-accounts-v1!f:gce-account.json
+        jsonPath: encryptedFile:gcs!b:gcs-accounts!f:gce-account.json
         alphaListed: false
         imageProjects: []
         consul:
